@@ -1,0 +1,203 @@
+The Schema
+Each queryable object is defined entirely by a schema. The schema details each possible field that can be used in the query, as well as each field that can be contained in the response (note that the fields in the query may be different than the fields in the response).
+
+In this example we will look at a modified (shortened) version of the schema for the work order query.
+
+Finding Queryable Types
+The first step is to get a list of queryable types so we can then get the schema for the desired type. This is done by making a request to  services/general/query/querytypes  . This will return a list of queryable types that looks like this:
+
+[
+    "Inspection"
+    "PW Code",
+    "Service Request",
+    "User",
+    "Work Order"
+]
+Getting the Schema
+After identifying the queryable type we want as "Work Order", we can get the schema by passing that type in the request to  services/general/query/queryschema  . This will return a schema similar to the one below (note that this one is missing most fields to simplify the example):
+
+{
+    "Name": "WorkOrder",
+    "Search": {
+        "ChildSchemas": {
+            "WorkOrderLabor": {
+                "FinishDate": {
+                    "Name": "FinishDate",
+                    "FieldType": "DateTime"
+                },
+                "GroupName": {
+                    "Name": "GroupName",
+                    "FieldType": "String"
+                }
+            },
+            "WorkOrderTask": {
+                "IsRework": {
+                    "Name": "IsRework",
+                    "FieldType": "Boolean"
+                },
+                "Keyword": {
+                    "Name": "Keyword",
+                    "FieldType": "String"
+                },
+    
+                "ShopDescription": {
+                    "Name": "ShopDescription",
+                    "FieldType": "String"
+                },
+                "StatusCode": {
+                    "Name": "StatusCode",
+                    "FieldType": "String"
+                },
+                "StatusDescription": {
+                    "Name": "StatusDescription",
+                    "FieldType": "String"
+                }
+            }
+        },
+        "SearchFields": {
+            "ActualFinishDate": {
+                "Name": "ActualFinishDate",
+                "FieldType": "DateTime"
+            },
+            "ExpenseType": {
+                "Name": "ExpenseType",
+                "Choices": [
+                    {
+                        "Value": "MAINT",
+                        "Description": "MAINT"
+                    },
+                    {
+                        "Value": "CIP",
+                        "Description": "CIP"
+                    }
+                ],
+                "FieldType": "String"
+            },
+            "HasAttachment": {
+                "Name": "HasAttachment",
+                "FieldType": "Boolean"
+            },
+            "Labor": {
+                "Name": "Labor",
+                "FieldType": "WorkOrderLabor"
+            },
+            "MapPage": {
+                "Name": "MapPage",
+                "FieldType": "String"
+            },
+            "Supervisor": {
+                "Name": "Supervisor",
+                "FieldType": "String"
+            },
+            "SupervisorSid": {
+                "Name": "SupervisorSid",
+                "FieldType": "Int"
+            },
+            "Tasks": {
+                "Name": "Tasks",
+                "FieldType": "WorkOrderTask"
+            },
+            "WOXCoordinate": {
+                "Name": "WOXCoordinate",
+                "FieldType": "Float"
+            },
+            "WOYCoordinate": {
+                "Name": "WOYCoordinate",
+                "FieldType": "Float"
+            }
+        }
+    },
+    "Response": {
+        "ChildSchemas": {
+            "WorkOrderLabor": {
+                "FinishDate": {
+                    "Name": "FinishDate",
+                    "FieldType": "DateTime"
+                },
+                "GroupName": {
+                    "Name": "GroupName",
+                    "FieldType": "String"
+                }
+            }
+        },
+        "ResponseFields": {
+            "Labor": {
+                "Name": "Labor",
+                "FieldType": "Array<WorkOrderLabor>"
+            },
+            "Supervisor": {
+                "Name": "Supervisor",
+                "FieldType": "String"
+            },
+            "SupervisorSid": {
+                "Name": "SupervisorSid",
+                "FieldType": "Int"
+            },
+            "WorkOrderId": {
+                "Name": "WorkOrderId",
+                "FieldType": "String"
+            }
+        }
+    }
+}
+
+
+
+
+
+EXAMPLES
+
+QueryTypeName(conditions[, <subquery_1>, <subquery_2>, ..., <subquery_n>])
+
+Example
+
+Find work orders that have an attachment
+
+WorkOrder(HasAttachment = true) 
+
+Example
+
+Find work orders that do not have an attachment
+
+WorkOrder(HasAttachment = false)  or  WorkOrder(HasAttachment != true) 
+
+Example
+
+Find work orders that do not have a supervisor
+
+WorkOrder(SupervisorSid = null) 
+
+Example
+
+Find work orders with a specific supervisor name
+
+WorkOrder(Supervisor LIKE "%mi%")  (note that  %  are wildcards and match any sequence of characters; matches would include "smith, john" and "doe, mike")
+
+Example
+
+Find work orders that fall within a given area
+
+WorkOrder(WOXCoordinate > 100 AND WOXCoordinate < 200 AND WOYCoordinate >= 500 AND WOYCoordinate <= 800) 
+
+Example
+
+Find all work orders without a map page that don't have certain supervisors
+
+WorkOrder((MapPage = null OR MapPage = "") AND SupervisorSid NOT IN (100, 212, 314, 55) 
+
+(Notice the parentheses around  MapPage = null OR MapPage = ""  to ensure correct order of operations.  AND  is always evaluated before  OR  .)
+
+The above examples illustrate most of the operators that can used in a query. The complete list is  <  ,  <=  ,  >  ,  >=  ,  =  ,  !=  ,  IN  ,  NOT IN  ,  AND  , and  OR  .
+
+Notice that the query always starts with the identifer that matches the value in the top level  Name  property of the schema object.
+
+Advanced Queries with Subqueries
+All the above examples are queries on the top level object properties. But if you look at the  SearchFields.Labor  property you will see that it is a schema of type  WorkOrderLabor  . Likewise, the  SearchFields.Tasks  property is a schema of type  WorkOrderTask  .
+
+These properties can be queried by using subqueries. This is demonstrated in the following examples.
+
+Example
+
+Find all work orders with a certain expense type and labor with a certain group name
+
+WorkOrder(ExpenseType = "MAINT", Labor(GroupName = "Roads"))
