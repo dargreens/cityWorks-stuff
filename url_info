@@ -1,0 +1,21 @@
+https://powercwpartner.com/Cityworks_23-1/apidocs/#/examples/introduction
+
+github.com/milkor56/Conferences
+
+https://github.com/milkor56/Conferences/blob/main/Cityworks%20Innovate%202021%20Conference%20Public.ipynb
+
+
+
+
+
+//auth methods
+HTTP GET Example of General/Authentication/Authenticate
+# No token is needed for this request
+http://localhost/Cityworks/Services/General/Authentication/Authenticate?data={"LoginName":"jdoe","Password":"jdoe"}
+
+
+
+HTTP GET Example of General/Authentication/Validate
+# token is added to the authorization header as
+# Authorization: cityworks eyJFbXBsb3llZVNpZCI6NTg4OSwiSXNzdWVkVGltZSI6MTQ
+http://localhost/Cityworks/Services/General/Authentication/Validate?data={"Token":"eyJFbXBsb3llZVNpZCI6NTg4OSwiSXNzdWVkVGltZSI6MTQ"}
