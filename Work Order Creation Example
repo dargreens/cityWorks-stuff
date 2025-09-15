@@ -1,0 +1,275 @@
+Work Order Creation Example
+Get a list of domains
+
+# Authorization: cityworks eyJFbXBsb3llZVNpZCI6NTg4OSwiSXNzdWVkVGltZSI6MTQ
+http://localhost/Cityworks/Services/General/Authentication/Domains
+{
+    "Value": [
+        {
+            "DomainId":2,
+            "DomainName":"PARKS",
+            "Description":"Parks",
+            "WebTitle":"",
+            "ImageUrl":"",
+            "EditButtonsOn":false
+        },
+        {
+            "DomainId":1,
+            "DomainName":"WATER",
+            "Description":"Water",
+            "WebTitle":"",
+            "ImageUrl":"",
+            "EditButtonsOn":false
+        }
+    ],
+    "Status":0,
+    "Message": null,
+    "ErrorMessages": [ ],
+    "WarningMessages": [ ],
+    "SuccessMessages": [ ]
+}
+Get a list of entity groups in the  Parks  domain.
+
+# Authorization: cityworks eyJFbXBsb3llZVNpZCI6NTg4OSwiSXNzdWVkVGltZSI6MTQ
+http://localhost/Cityworks/Services/AMS/Entity/Groups?data={"DomainId":2}
+{
+    "Value":[
+        {
+            "Module":"L",
+            "ModuleName":"Land"
+        },
+        {
+            "Module":"P",
+            "ModuleName":"Parks"
+        }
+    ],
+    "Status":0,
+    "Message": null,
+    "ErrorMessages": [ ],
+    "WarningMessages": [ ],
+    "SuccessMessages": [ ]
+}
+Get a list of entity types in the  Parks  entity group.
+
+# Authorization: cityworks eyJFbXBsb3llZVNpZCI6NTg4OSwiSXNzdWVkVGltZSI6MTQ
+http://localhost/Cityworks/Services/AMS/Entity/Types?data={"EntityGroup":"P"}
+{
+    "Value":[
+        {
+            "Code":"GOLFCOURSE",
+            "Description":"Golf Course",
+            "EntityType":1,
+            "Module":"P",
+            "Tag":null
+        },
+        {
+            "Code":"LOCALPARK",
+            "Description":"Local Park",
+            "EntityType":1,
+            "Module":"P",
+            "Tag":null
+        }
+    ],
+    "Status":0,
+    "Message": null,
+    "ErrorMessages": [ ],
+    "WarningMessages": [ ],
+    "SuccessMessages": [ ]
+}
+Get a list of work order templates for the  LOCALPARK  entity type.
+
+# Authorization: cityworks eyJFbXBsb3llZVNpZCI6NTg4OSwiSXNzdWVkVGltZSI6MTQ
+http://localhost/Cityworks/Services/AMS/WorkOrder/Templates?data={"EntityType":"LOCALPARK"}
+{
+    "Value":[
+        {
+            "WOTemplateId":"2",
+            "Description":"Remove Graffiti",
+            "WOCategory":""
+        }
+    ],
+    "Status":0,
+    "Message": null,
+    "ErrorMessages": [ ],
+    "WarningMessages": [ ],
+    "SuccessMessages": [ ]
+}
+Get a list of the custom fields work the template.
+
+# Authorization: cityworks eyJFbXBsb3llZVNpZCI6NTg4OSwiSXNzdWVkVGltZSI6MTQ
+http://localhost/Cityworks/Services/AMS/WorkOrder/TemplateCustomFields?data={"WOTemplateId":"2"}
+{
+    "Value":[
+        {
+            "CategoryId":1,
+            "CustFieldId":2,
+            "CustFieldName":"CANSOFCLEANER",
+            "CodeType":"",
+            "IsRequired":false,
+            "CustFieldType":1,
+            "DefaultValue":"0",
+            "MinValue":0.0,
+            "MaxValue":100.0,
+            "UseCodeDesc":"",
+            "LinkFieldName":"",
+            "IsVisible":true,
+            "UseCodeForDisplay":false,
+            "ValidationErrors":[],
+            "ErrorMessages":null
+        },
+        {
+            "CategoryId":1,
+            "CustFieldId":3,
+            "CustFieldName":"NUMOFRAGS",
+            "CodeType":"",
+            "IsRequired":false,
+            "CustFieldType":1,
+            "DefaultValue":"0",
+            "MinValue":0.0,
+            "MaxValue":100.0,
+            "UseCodeDesc":"",
+            "LinkFieldName":"",
+            "IsVisible":true,
+            "UseCodeForDisplay":false,
+            "ValidationErrors":[],
+            "ErrorMessages":null
+        }
+    ],
+    "Status":0,
+    "Message": null,
+    "ErrorMessages": [ ],
+    "WarningMessages": [ ],
+    "SuccessMessages": [ ]
+}
+Create an attached  Remove Graffiti  work order with custom fields specified.
+
+# Authorization: cityworks eyJFbXBsb3llZVNpZCI6NTg4OSwiSXNzdWVkVGltZSI6MTQ
+http://localhost/Cityworks/Services/AMS/WorkOrder/Create?data=(See Below)
+data
+
+{
+    "WOTemplateId": "2",
+    "EntityType":"LOCALPARK",
+    "Entities":[{
+        "FeatureId": 123,
+        "FeatureType": "LOCALPARK",
+        "FeatureUid": "123",
+        "EntitySid": 123,
+        "EntityType": "LOCALPARK",
+        "EntityUid": "123",
+        "X": 123.456,
+        "Y": 789.101
+    }],
+    "CustomFieldValues":{
+        "2":"5",
+        "3":"20"
+    }
+}
+response
+
+{
+    "Value": {
+        "UnitsAccompDescLock":false,
+        "WorkOrderId":"5",
+        "DomainId":2,
+        "ProjectSid":0,
+        "WOTemplateId":"2",
+        "WOCustFieldCatId":1,
+        "Unattached":false,
+        "AssetGroup":"Parks",
+        "ApplyToEntity":"LOCALPARK",
+        "Supervisor":"",
+        "RequestedBy":"",
+        "Location":"",
+        "AcctNum":"",
+        "ContractorSid":0,
+        "UpdateMap":false,
+        "LegalBillable":false,
+        "ContrBillable":false,
+        "CycleFrom":2,
+        "CreatedByCycle":false,
+        "SourceWOId":"",
+        "TransToWOId":"",
+        "Description":"Remove Graffiti",
+        "Priority":"3",
+        "WOXCoordinate":-9999.0,
+        "WOYCoordinate":-9999.0,
+        "NumDaysBefore":2,
+        "WOAddress":"",
+        "MapTemplateName":"",
+        "WOMapScale":6,
+        "InitiatedBy":"JOHN, DOE",
+        "InitiateDate":"2011-03-01T23:42:56Z",
+        "CycleType":0,
+        "CycleIntervalNum":6,
+        "SubmitTo":"",
+        "CycleIntervalUnit":2,
+        "WOClosedBy":"",
+        "DateWOClosed":null,
+        "ProjectName":"",
+        "DateSubmitTo":null,
+        "SubmitToOpenBy":"",
+        "DateSubmitToOpen":null,
+        "FromDate":null,
+        "ProjStartDate":"2011-03-01T23:42:56Z",
+        "WorkCompletedBy":"",
+        "ProjFinishDate":"2011-03-03T23:42:56Z",
+        "DateToBePrinted":"2011-03-03T23:42:56Z",
+        "WOOutput":0,
+        "ActualStartDate":null,
+        "ActualFinishDate":null,
+        "MapPage":"",
+        "Shop":"",
+        "Status":"",
+        "Cancel":false,
+        "CancelledBy":"",
+        "DateCancelled":null,
+        "ScheduleDate":null,
+        "WOCategory":"",
+        "TileNo":"",
+        "DatePrinted":null,
+        "Stage":1,
+        "ExpenseType":0,
+        "WOCost":0.0,
+        "WOLaborCost":0.0,
+        "WOMatCost":0.0,
+        "WOEquipCost":0.0,
+        "WOPermitCost":0.0,
+        "ContractorName":null,
+        "Text1":"",
+        "Text2":"",
+        "Text3":"",
+        "Text4":"",
+        "Text5":"",
+        "Text6":"",
+        "Text7":"",
+        "Text8":"",
+        "Text9":"",
+        "Text10":"",
+        "CancelReason":"",
+        "Num1":-9999.0,
+        "Num2":-9999.0,
+        "Num3":-9999.0,
+        "Num4":-9999.0,
+        "Num5":-9999.0,
+        "Date1":null,
+        "Date2":null,
+        "Date3":null,
+        "Date4":null,
+        "Date5":null,
+        "District":"",
+        "Resolution":"",
+        "PrimaryContractId":0,
+        "IsClosed":false,
+        "ContractWOId":"",
+        "StreetName":"",
+        "UnitsAccomplished":0.0,
+        "UnitsAccompDesc":"",
+        "LockedByDesktopUser":""
+    },
+    "Status":0,
+    "Message": null,
+    "ErrorMessages": [ ],
+    "WarningMessages": [ ],
+    "SuccessMessages": [ ]
+}
